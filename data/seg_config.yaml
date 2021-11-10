@@ -1,0 +1,85 @@
+GlobalWM:
+  brain-stem : 1
+  left cerebral white matter : 1
+  right cerebellum white matter : 1
+  left cerebellum white matter : 1
+  right cerebral white matter : 1
+  optic chiasm : 1
+  left ventral DC : 1
+  right ventral DC : 1
+  # right thalamus : 1
+  # left thalamus : 1
+  # left pallidum: 1
+  # right pallidum: 1
+  
+GlobalGM:
+  left cerebellum cortex : 2
+  right cerebellum cortex : 2
+  left cerebral cortex : 2
+  right cerebral cortex : 2
+  left amygdala : 2
+  right amygdala : 2
+  left hippocampus : 2
+  right hippocampus : 2
+  right accumbens area : 2
+  left accumbens area : 2
+  right caudate : 2
+  left caudate : 2
+  # left thalamus : 2
+  # right thalamus : 2
+GlobalCSF:
+  CSF : 3
+  fluid inside eyes : 3
+  3rd ventricle  : 3
+  4th ventricle : 3 
+  5th ventricle : 3 
+  left lateral ventricle : 3
+  right lateral ventricle : 3
+  right inferior lateral ventricle : 3
+  left inferior lateral ventricle : 3
+  right choroid plexus: 3
+  left choroid plexus: 3
+  right vessel: 3
+  left vessel: 3
+
+SEG_MAP:
+  left cerebral white matter : 2
+  left cerebral cortex : 3
+  left lateral ventricle : 4
+  left cerebellum white matter : 7
+  left inferior lateral ventricle: 5
+  left cerebellum cortex: 8
+  left thalamus : 10
+  left caudate : 11
+  left putamen : 12
+  left pallidum :  13
+  3rd ventricle : 14
+  4th ventricle : 15
+  brain-stem : 16
+  left hippocampus : 17
+  left amygdala : 18
+  left accumbens area : 26
+  left ventral DC : 28
+  right cerebral white matter : 41
+  right cerebral cortex : 42
+  right lateral ventricle : 43
+  right inferior lateral ventricle: 44 
+  right cerebellum white matter : 46
+  right cerebellum cortex : 47
+  right thalamus : 49
+  right caudate : 50
+  right putamen : 51
+  right pallidum : 52
+  right hippocampus : 53
+  right amygdala : 54
+  right accumbens area : 58
+  right ventral DC : 60 
+  optic chiasm : 85
+  CSF : 24
+  fluid inside eyes: 259
+  5th ventricle: 72
+  right choroid plexus: 63 
+  left choroid plexus: 31
+  right vessel: 62
+  left vessel: 30
+
