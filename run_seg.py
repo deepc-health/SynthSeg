@@ -33,9 +33,14 @@ if args['cpu']:
     print('using CPU, hiding all CUDA_VISIBLE_DEVICES')
     os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 else:
-    physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    print("physical_devices-------------", len(physical_devices))
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    try:
+        physical_devices = tf.config.experimental.list_physical_devices('GPU')
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        print(f"Found {len(physical_devices)} GPU devices.")
+    except IndexError:
+        print('trying to run a GPU code but no GPUs found!!')
+        print('using CPU by default.')
+        os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 del args['cpu']
 
 # limit the number of threads to be used if running on CPU
@@ -85,6 +90,7 @@ for nii_file in tqdm.tqdm(nii_files, desc= "File Procesing"):
 
 
 # print information
+print()
 print(Fore.RED + "SEGMENTER".center(line_length, "*") + Fore.RESET)
 print()
 print(f'Processed '+ Fore.GREEN +f"{len(nii_files)}"+ Fore.RESET +  ' Nifti Files ')

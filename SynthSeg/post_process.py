@@ -24,7 +24,7 @@ def anatomy_seg(inp_file_path:str, op_file_path:str, mapping_path:str):
                     new_value = new_seg[part]
                     out_arr[in_arr== og_value] = new_value
 
-        out_nii = nib.Nifti1Image(out_arr, ref_header.get_sform(), ref_header)
+        out_nii = nib.Nifti1Image(out_arr.astype(np.uint8), ref_header.get_sform(), ref_header)
         nib.save(out_nii, op_file_path)
         return "ok"
     except Exception as e:
@@ -33,9 +33,9 @@ def anatomy_seg(inp_file_path:str, op_file_path:str, mapping_path:str):
 
 def resample_og_size(inp_file_path:str, op_file_path:str, tmp_file_path:str):
     try:
-        stat_img = image.load_img(inp_file_path)
-        temp_img = image.load_img(tmp_file_path)
-        resampled_stat_img = resample_to_img(stat_img, temp_img)
+        stat_img = image.load_img(inp_file_path, dtype="float32")
+        temp_img = image.load_img(tmp_file_path, dtype="float32")
+        resampled_stat_img = resample_to_img(stat_img, temp_img, interpolation='nearest')
         resampled_stat_img.to_filename(op_file_path)   
         return "ok"
     except Exception as e:

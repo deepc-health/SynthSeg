@@ -10,23 +10,19 @@ for plug and play approach.
 
 ### Easily segment your data with one command
 
-Once all the python packages are installed (see below), you can simply test SynthSeg on your own data with:
+Once all the docker and its dependancies are installed, you can simply test brain matter segmentation on your own data with:
+
+**Run with GPUs:**
 ```
-python ./scripts/commands/SynthSeg_predict.py --i <image> --o <segmentation> --post <post> --resample <resample> --vol <vol>
+docker run --gpus all -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py <optional_flags>
+```
+**Run without GPUs:**
+```
+docker run -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py --cpu <optional_flags>
 ```
 where:
-- `<image>` is the path to an image to segment (supported formats are .nii, .nii.gz, and .mgz). \
-This can also be a folder, in which case all the image inside that folder will be segmented.
-- `<segmentation>` is the path where the output segmentation(s) will be saved. \
-This must be a folder if `<image>` designates a folder.
-- `<post>` (optional) is the path where the posteriors (given as soft probability maps) will be saved. \
-This must be a folder if `<image>` designates a folder.
-- `<resample>` (optional) SynthSeg segmentations are always given at 1mm isotropic resolution. Therefore, 
-images are internally resampled to this resolution (except if they aleady are at 1mm resolution). 
-Use this optional flag to save the resampled images: it must be the path to a single image, or a folder
-if `<image>` designates a folder.
-- `<vol>` (optional) is the path to an output csv file where the volumes of every segmented structures
-will be saved for all scans (i.e., one csv file for all subjects; e.g. /path/to/volumes.csv)
+- `<inpdir>` is the directory with all nifti files(extn .nii.gz or .nii) that need to be segmented.
+- `<outdir>` is the directory where all outputs are stored(`<inpdir>` should not be `<outdir>`). 
 
 \
 Additional optional flags are also available:
@@ -40,11 +36,26 @@ different sizes in each direction, ordered in RAS coordinates). This value defau
 for faster analysis or to fit in your GPU.
 
 
-**IMPORTANT:** We resample the synthseg output to its original voxel dimension. So both the anatomy maps and the region maps 
+**IMPORTANT:** Unlike the original synthseg, we resample the synthseg output to its original voxel dimension. So both the anatomy maps and the region maps 
 are overlayable on the original input MRI.
 
 The complete list of segmented structures is available in [labels table.txt](data/labels%20table.txt) along with their
 corresponding values.
+
+----------------
+
+### Input Folder Structure
+
+The `seg_config.yaml` is optional inside the `inpdir`. It is only required when the user wants to change the classification of the default anatomy into different regions than in the default `seg_config.yaml`
+```
+│
+└───<inpdir>
+│   │   file011.nii.gz
+│   │   file012.nii.gz
+│   │   file012.nii.gz
+│   │.  seg_config.yaml
+
+```
 
 ----------------
 
