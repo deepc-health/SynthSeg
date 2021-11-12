@@ -58,6 +58,37 @@ The `seg_config.yaml` is optional inside the `inpdir`. It is only required when 
 ```
 
 ----------------
+### Output Folder Structure
+After processing is over the `<outdir>` has folders - `anatomy_seg` and `matter_seg`.
+
+where:
+- `anatomy_seg` is the directory where the files with the different brain structures are segmented separately(the resampled to orignal size output of the SynthSeg algorithm)
+- `matter_seg` is the directory where the files where the anatomies are aggregated into different regions like GM, WM, CSF and others as specified by the `seg_config.yaml`
+- `labels.json` is a json file which has the mapping between pixel values of the nifti file and the corresponding name of the structure or region.
+
+```
+│
+└───<outdir>
+│   │─── anatomy_seg
+│   │   │   │seg_file011.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │.  labels.json
+│   │
+│   │─── matter_seg
+│   │   │   │seg_file011.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │.  labels.json
+
+```
+----------------
+### User Specified `seg_config.yaml`
+
+Download the template `seg_config.yaml` from [here](https://raw.githubusercontent.com/a-parida12/SynthSeg/master/data/seg_config.yaml)(You can right click save-as `seg_config.yaml`). Modify the various regions by following the steps mentioned in the yaml file. Do not forget to put the modified file inside the `<inpdir>` along with the other Nifti Files.
+
+
+--------------------------------
 
 ### How does it work ?
 
