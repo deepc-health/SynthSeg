@@ -4,7 +4,7 @@ import tqdm
 import datetime
 from SynthSeg.predict import predict
 from pathlib import Path
-from SynthSeg.post_process import anatomy_seg, resample_og_size
+from SynthSeg.post_process import anatomy_seg, resample_og_size, store_labels_json
 from argparse import ArgumentParser
 import tensorflow as tf
 import os
@@ -78,7 +78,7 @@ print()
 print("".center(line_length, "*"))
 print()
 
-
+store_labels_json(mapping_path=mapping_path)
 for nii_file in tqdm.tqdm(nii_files, desc= "File Procesing"):
     args["path_images"] = nii_file
     name = str(Path(nii_file).name)

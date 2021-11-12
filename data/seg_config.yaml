@@ -1,48 +1,86 @@
-GlobalWM:
-  brain-stem : 1
-  left cerebral white matter : 1
-  right cerebellum white matter : 1
-  left cerebellum white matter : 1
-  right cerebral white matter : 1
-  optic chiasm : 1
-  left ventral DC : 1
-  right ventral DC : 1
-  # right thalamus : 1
-  # left thalamus : 1
-  # left pallidum: 1
-  # right pallidum: 1
-  
-GlobalGM:
-  left cerebellum cortex : 2
-  right cerebellum cortex : 2
-  left cerebral cortex : 2
-  right cerebral cortex : 2
-  left amygdala : 2
-  right amygdala : 2
-  left hippocampus : 2
-  right hippocampus : 2
-  right accumbens area : 2
-  left accumbens area : 2
-  right caudate : 2
-  left caudate : 2
-  # left thalamus : 2
-  # right thalamus : 2
-GlobalCSF:
-  CSF : 3
-  fluid inside eyes : 3
-  3rd ventricle  : 3
-  4th ventricle : 3 
-  5th ventricle : 3 
-  left lateral ventricle : 3
-  right lateral ventricle : 3
-  right inferior lateral ventricle : 3
-  left inferior lateral ventricle : 3
-  right choroid plexus: 3
-  left choroid plexus: 3
-  right vessel: 3
-  left vessel: 3
+Regions:
+  -   seg value: 0
+      seg name: "Irrelevant"
+      synthseg_labels:
+        - background
 
-SEG_MAP:
+  -   seg value: 1
+      seg name: "White Matter"
+      synthseg_labels:
+        - brain-stem 
+        - left cerebral white matter
+        - right cerebellum white matter
+        - left cerebellum white matter
+        - right cerebral white matter
+        - optic chiasm
+        - left ventral DC
+        - right ventral DC
+      # - right thalamus
+      # - left thalamus
+      # - left pallidum
+      # - right pallidum
+
+  -   seg value: 2
+      seg name: "Gray Matter"
+      synthseg_labels:
+        - left cerebellum cortex
+        - right cerebellum cortex
+        - left cerebral cortex
+        - right cerebral cortex
+        - left amygdala
+        - right amygdala
+        - left hippocampus
+        - right hippocampus
+        - right accumbens area
+        - left accumbens area
+        - right caudate
+        - left caudate
+      # - right thalamus
+      # - left thalamus
+
+  -   seg value: 3
+      seg name: "Cerebro-Spinal Fluid"
+      synthseg_labels:
+        - CSF
+        - fluid inside eyes
+        - 3rd ventricle
+        - 4th ventricle 
+        - 5th ventricle
+        - left lateral ventricle
+        - right lateral ventricle
+        - right inferior lateral ventricle
+        - left inferior lateral ventricle
+        - right choroid plexus
+        - left choroid plexus
+        - right vessel
+        - left vessel
+
+# - # Add new regions here
+
+# TO ADD A NEW REGION
+# Copy paste the following lines, uncomment and edit it
+# 0000000000000000
+#  - seg value: 1 # uint8; voxel value of the nifti segmentation
+#    seg name: "White Matter" # str; human readable name for the region
+#    synthseg_labels: # all the synthseg anatomical region from above that are part of this region 
+#     - brain-stem 
+#     - left cerebral white matter
+#     - right cerebellum white matter
+#     - left cerebellum white matter
+#     - right cerebral white matter
+# 0000000000000000
+
+# IMPORTANT:
+# - seg value need to be unique 
+# - a synthseg label cannot be part of 2 different regions yet
+# - a list of all synthseg elements is given below
+# - synthseg labels are case and charecter sensitive
+
+## BE CAREFUL HERE!
+## Values come from Synthseg! 
+## Do not edit below this line ##
+SYNTHSEG_MAP:
+  background : 0
   left cerebral white matter : 2
   left cerebral cortex : 3
   left lateral ventricle : 4
@@ -82,4 +120,3 @@ SEG_MAP:
   left choroid plexus: 31
   right vessel: 62
   left vessel: 30
-
