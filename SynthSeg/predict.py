@@ -59,7 +59,7 @@ def predict(path_images,
             list_correct_labels=None,
             compute_distances=False,
             recompute=True,
-            verbose=True):
+            verbose=False):
     """
     This function uses trained models to segment images.
     It is crucial that the inputs match the architecture parameters of the trained model.

@@ -1,48 +1,28 @@
-# SynthSeg
+# Anatomy Based GM, WM and CSF Segmentation
 
-\
-\
-:tada: Update 29/10/2021: SynthSeg is now available on the dev version of 
-[FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall)   !! :tada: \
-See [here](https://surfer.nmr.mgh.harvard.edu/fswiki/SynthSeg) on how to use it
-\
-\
-\
-In this repository, we present SynthSeg, the first convolutional neural network to readily segment brain MRI scans of
-any contrast and resolution, with an predictions at 1mm isotropic resolution, regardless of the input resolution. 
-Additionally, the proposed model is robust to:
-- a wide array of subject populations: from young and healthy to ageing and diseased subjects with prominent atrophy,
-- white matter lesions,
-- and scans with or without preprocessing (bias field corruption, skull stripping, intensity normalisation, registration to
-template).
-
-As a result, SynthSeg only relies on a single model, which we distribute here. We emphasise that this model can be used
-out-of-the-box without retraining or fine-tuning, and can run on the GPU (6s per scan) as well as the CPU (1min).
-\
-\
-![Generation examples](data/README_figures/segmentations.png)
+In this repository, we repurpose the SynthSeg based model to 
+do Gray Matter, White Matter and Cerebro Spinal Fluid segmentation for MRI of the brain. 
+Using medical information we assign each of the anatomical region from the synthseg into one 
+of the categories. This process is also configurable. The method is dockerised in to allow 
+for plug and play approach. 
 
 ----------------
 
 ### Easily segment your data with one command
 
-Once all the python packages are installed (see below), you can simply test SynthSeg on your own data with:
+Once all the docker and its dependancies are installed, you can simply test brain matter segmentation on your own data with:
+
+**Run with GPUs:**
 ```
-python ./scripts/commands/SynthSeg_predict.py --i <image> --o <segmentation> --post <post> --resample <resample> --vol <vol>
+docker run --gpus all -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py <optional_flags>
+```
+**Run without GPUs:**
+```
+docker run -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py --cpu <optional_flags>
 ```
 where:
-- `<image>` is the path to an image to segment (supported formats are .nii, .nii.gz, and .mgz). \
-This can also be a folder, in which case all the image inside that folder will be segmented.
-- `<segmentation>` is the path where the output segmentation(s) will be saved. \
-This must be a folder if `<image>` designates a folder.
-- `<post>` (optional) is the path where the posteriors (given as soft probability maps) will be saved. \
-This must be a folder if `<image>` designates a folder.
-- `<resample>` (optional) SynthSeg segmentations are always given at 1mm isotropic resolution. Therefore, 
-images are internally resampled to this resolution (except if they aleady are at 1mm resolution). 
-Use this optional flag to save the resampled images: it must be the path to a single image, or a folder
-if `<image>` designates a folder.
-- `<vol>` (optional) is the path to an output csv file where the volumes of every segmented structures
-will be saved for all scans (i.e., one csv file for all subjects; e.g. /path/to/volumes.csv)
+- `<inpdir>` is the directory with all nifti files(extn .nii.gz or .nii) that need to be segmented.
+- `<outdir>` is the directory where all outputs are stored(`<inpdir>` should not be `<outdir>`). 
 
 \
 Additional optional flags are also available:
@@ -56,41 +36,59 @@ different sizes in each direction, ordered in RAS coordinates). This value defau
 for faster analysis or to fit in your GPU.
 
 
-**IMPORTANT:** Because SynthSeg may produce segmentations at higher resolution than the images (i.e., at 
-1mm<sup>3</sup>), some viewers will not display them correctly when overlaying the segmentations on the
-original images. If that’s the case, you can use the `--resample` flag to obtain a resampled image that
-lives in the same space as the segmentation, such that any viewer can be used to visualize them together.
-We highlight that the resampling is performed internally to avoid the dependence on any external tool.
+**IMPORTANT:** Unlike the original synthseg, we resample the synthseg output to its original voxel dimension. So both the anatomy maps and the region maps 
+are overlayable on the original input MRI.
 
 The complete list of segmented structures is available in [labels table.txt](data/labels%20table.txt) along with their
-corresponding values. This table also details the order in which the posteriors maps are sorted.
+corresponding values.
 
 ----------------
 
-### Requirements
+### Input Folder Structure
 
-All the python requirements are listed in requirements.txt. We list here the important dependencies:
+The `seg_config.yaml` is optional inside the `inpdir`. It is only required when the user wants to change the classification of the default anatomy into different regions than in the default `seg_config.yaml`
+```
+│
+└───<inpdir>
+│   │   file011.nii.gz
+│   │   file012.nii.gz
+│   │   file012.nii.gz
+│   │.  seg_config.yaml
 
-- Python 3.6 (this is important to have access to the right keras and tensorflow versions!)
-- tensorflow-gpu 2.0.1
-- keras 2.3.1
-- nibabel
-- numpy, scipy, sklearn, tqdm, pillow, matplotlib, ipython, ...
-
-This code also relies on several external packages (already included in `\ext` for convenience):
-
-- [lab2im](https://github.com/BBillot/lab2im): contains functions for data augmentation, and a simple version of 
- the generative model, on which we build to build `label_to_image_model`
-- [neuron](https://github.com/adalca/neuron): contains functions for deforming, and resizing tensors, as well as 
-functions to build the segmentation network [1,2].
-- [pytool-lib](https://github.com/adalca/pytools-lib): library required by the *neuron* package.
-
-If you wish to run SynthSeg on the GPU, or to train your own model, you will also need the usual deep learning libraries:
-- Cuda 10.0
-- CUDNN 7.0
-
+```
 
 ----------------
+### Output Folder Structure
+After processing is over the `<outdir>` has folders - `anatomy_seg` and `matter_seg`.
+
+where:
+- `anatomy_seg` is the directory where the files with the different brain structures are segmented separately(the resampled to orignal size output of the SynthSeg algorithm)
+- `matter_seg` is the directory where the files where the anatomies are aggregated into different regions like GM, WM, CSF and others as specified by the `seg_config.yaml`
+- `labels.json` is a json file which has the mapping between pixel values of the nifti file and the corresponding name of the structure or region.
+
+```
+│
+└───<outdir>
+│   │─── anatomy_seg
+│   │   │   │seg_file011.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │.  labels.json
+│   │
+│   │─── matter_seg
+│   │   │   │seg_file011.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │seg_file012.nii.gz
+│   │   │   │.  labels.json
+
+```
+----------------
+### User Specified `seg_config.yaml`
+
+Download the template `seg_config.yaml` from [here](https://raw.githubusercontent.com/a-parida12/SynthSeg/master/data/seg_config.yaml)(You can right click save-as `seg_config.yaml`). Modify the various regions by following the steps mentioned in the yaml file. Do not forget to put the modified file inside the `<inpdir>` along with the other Nifti Files.
+
+
+--------------------------------
 
 ### How does it work ?
 
@@ -119,65 +117,6 @@ MR contrast but not resolution).
 \
 \
 [![Talk SynthSeg](data/README_figures/youtube_link.png)](https://www.youtube.com/watch?v=Bfp3cILSKZg&t=1s)
-
-----------------
-
-### Train your own model
-
-This repository contains all the code and data necessary to train, validate, and test your own network. Importantly, the
-proposed method only requires a set of anatomical segmentations to be trained (no images), which we include in 
-[data](data/training_label_maps). While the provided functions are thoroughly documented, we highly recommend to start 
-with the following tutorials:
-
-- [1-generation_visualisation](scripts/tutorials/1-generation_visualisation.py): This very simple script shows examples
-of the synthetic images used to train SynthSeg.
-
-- [2-generation_explained](scripts/tutorials/2-generation_explained.py): This second script describes all the parameters
-used to control the generative model. We advise you to thoroughly follow this tutorial, as it is essential to understand
-how the synthetic data is formed before you start training your own models.
-
-- [3-training](scripts/tutorials/3-training.py): This scripts re-uses the parameters explained in the previous tutorial
-and focuses on the learning/architecture parameters. The script here is the very one we used to train SynthSeg !
-
-- [4-training](scripts/tutorials/4-prediction.py): This scripts shows how to make predictions, once the network has been 
-trained.
-
-- [5-generation_advanced](scripts/tutorials/5-generation_advanced.py): Here we detail more advanced generation options, 
-in the case of training a version of SynthSeg that is specific to a given contrast and/or resolution (although these
-types of variants were shown to be outperformed by the SynthSeg model trained in the 3rd tutorial).
-
-- [6-intensity_estimation](scripts/tutorials/6-intensity_estimation.py): Finally, this script shows how to estimate the 
-Gaussian priors of the GMM when training a contrast-specific version of SynthSeg.
-
-These tutorials cover a lot of materials and will enable you to train your own SynthSeg model. Moreover, even more 
-detailed information is provided in the docstrings of all functions, so don't hesitate to have a look at these !
-
-----------------
-
-### Content
-
-- [SynthSeg](SynthSeg): this is the main folder containing the generative model and training function:
-
-  - [labels_to_image_model.py](SynthSeg/labels_to_image_model.py): contains the generative model for MRI scans.
-  
-  - [brain_generator.py](SynthSeg/brain_generator.py): contains the class `BrainGenerator`, which is a wrapper around 
-  `labels_to_image_model`. New images can simply be generated by instantiating an object of this class, and call the 
-  method `generate_image()`.
-  
-  - [training.py](SynthSeg/training.py): contains code to train the segmentation network (with explainations for all 
-  training parameters). This function also shows how to integrate the generative model in a training setting.
-  
-  - [predict.py](SynthSeg/predict.py): prediction and testing.
-   
-  - [validate.py](SynthSeg/validate.py): includes code for validation (which has to be done offline on real images).
- 
-- [models](models): this is where you will find the trained model for SynthSeg.
- 
-- [data](data): this folder contains some examples of brain label maps if you wish to train your own SynthSeg model.
- 
-- [script](scripts): contains tutorials as well as scripts to launch trainings and testings from a terminal.
-
-- [ext](ext): includes external packages, especially the *lab2im* package, and a modified version of *neuron*.
 
 
 ----------------

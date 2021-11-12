@@ -1,0 +1,122 @@
+Regions:
+  -   seg value: 0
+      seg name: "Irrelevant"
+      synthseg_labels:
+        - background
+
+  -   seg value: 1
+      seg name: "White Matter"
+      synthseg_labels:
+        - brain-stem 
+        - left cerebral white matter
+        - right cerebellum white matter
+        - left cerebellum white matter
+        - right cerebral white matter
+        - optic chiasm
+        - left ventral DC
+        - right ventral DC
+      # - right thalamus
+      # - left thalamus
+      # - left pallidum
+      # - right pallidum
+
+  -   seg value: 2
+      seg name: "Gray Matter"
+      synthseg_labels:
+        - left cerebellum cortex
+        - right cerebellum cortex
+        - left cerebral cortex
+        - right cerebral cortex
+        - left amygdala
+        - right amygdala
+        - left hippocampus
+        - right hippocampus
+        - right accumbens area
+        - left accumbens area
+        - right caudate
+        - left caudate
+      # - right thalamus
+      # - left thalamus
+
+  -   seg value: 3
+      seg name: "Cerebro-Spinal Fluid"
+      synthseg_labels:
+        - CSF
+        - fluid inside eyes
+        - 3rd ventricle
+        - 4th ventricle 
+        - 5th ventricle
+        - left lateral ventricle
+        - right lateral ventricle
+        - right inferior lateral ventricle
+        - left inferior lateral ventricle
+        - right choroid plexus
+        - left choroid plexus
+        - right vessel
+        - left vessel
+
+# - # Add new regions here
+
+# TO ADD A NEW REGION
+# Copy paste the following lines, uncomment and edit it
+# 0000000000000000
+#  - seg value: 1 # uint8; voxel value of the nifti segmentation
+#    seg name: "White Matter" # str; human readable name for the region
+#    synthseg_labels: # all the synthseg anatomical region from above that are part of this region 
+#     - brain-stem 
+#     - left cerebral white matter
+#     - right cerebellum white matter
+#     - left cerebellum white matter
+#     - right cerebral white matter
+# 0000000000000000
+
+# IMPORTANT:
+# - seg value need to be unique 
+# - a synthseg label cannot be part of 2 different regions yet
+# - a list of all synthseg elements is given below
+# - synthseg labels are case and charecter sensitive
+
+## BE CAREFUL HERE!
+## Values come from Synthseg! 
+## Do not edit below this line ##
+SYNTHSEG_MAP:
+  background : 0
+  left cerebral white matter : 2
+  left cerebral cortex : 3
+  left lateral ventricle : 4
+  left cerebellum white matter : 7
+  left inferior lateral ventricle: 5
+  left cerebellum cortex: 8
+  left thalamus : 10
+  left caudate : 11
+  left putamen : 12
+  left pallidum :  13
+  3rd ventricle : 14
+  4th ventricle : 15
+  brain-stem : 16
+  left hippocampus : 17
+  left amygdala : 18
+  left accumbens area : 26
+  left ventral DC : 28
+  right cerebral white matter : 41
+  right cerebral cortex : 42
+  right lateral ventricle : 43
+  right inferior lateral ventricle: 44 
+  right cerebellum white matter : 46
+  right cerebellum cortex : 47
+  right thalamus : 49
+  right caudate : 50
+  right putamen : 51
+  right pallidum : 52
+  right hippocampus : 53
+  right amygdala : 54
+  right accumbens area : 58
+  right ventral DC : 60 
+  optic chiasm : 85
+  CSF : 24
+  fluid inside eyes: 259
+  5th ventricle: 72
+  right choroid plexus: 63 
+  left choroid plexus: 31
+  right vessel: 62
+  left vessel: 30
