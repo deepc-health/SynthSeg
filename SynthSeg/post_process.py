@@ -4,39 +4,59 @@ import nibabel as nib
 from nilearn.image import resample_to_img
 from nilearn import image
 import yaml
+import textwrap
 
 def store_labels_json(mapping_path:str):
     with open(mapping_path, "r") as stream:
         seg_map = yaml.full_load(stream)
 
-    with open("./data/dcmqi-template.json") as json_data:
-        data_dict=json.load(json_data)
-    seg_atrributes_list = []
-
-    temp_dict = data_dict["segmentAttributes"][0]
-    for new_regions in seg_map['Regions']:
-        temp_dict["labelID"] = new_regions['seg value']
-        temp_dict["SegmentDescription"] = new_regions['seg name']
-        seg_atrributes_list.append(temp_dict.copy())
-
-    data_dict["segmentAttributes"] = seg_atrributes_list 
-
-    json_object = json.dumps(data_dict, indent = 4)
-    with open(f"./out/matter_seg/labels.json", "w") as outfile:
-        outfile.write(json_object)
+    itk_header="""################################################ 
+# ITK-SnAP Label Description File 
+# File format: 
+# IDX   -R-  -G-  -B-  -A--  VIS MSH  LABEL 
+# Fields: 
+#    IDX:   Zero-based index 
+#    -R-:   Red color component (0..255) 
+#    -G-:   Green color component (0..255) 
+#    -B-:   Blue color component (0..255) 
+#    -A-:   Label transparency (0.00 .. 1.00)
+#    VIS:   Label visibility (0 or 1)
+#    IDX:   Label mesh visibility (0 or 1) 
+#  LABEL:   Label description 
+################################################"""
+    txt = """\n  {:>3}   {:>3}  {:>3}  {:>3}        {}  {}  {}    "{}" """
     
-    seg_atrributes_list = []
-    for key, value in seg_map['SYNTHSEG_MAP'].items():
-        temp_dict["labelID"] = value
-        temp_dict["SegmentDescription"] = key
-        temp_dict["SegmentAlgorithmType"] = "AUTOMATIC"
-        seg_atrributes_list.append(temp_dict.copy())
+    f = open("data/color_lut.txt", 'r')
+    colors = []
+    for line in f:
+        colors.append(line)
+    f.close()
 
-    data_dict["segmentAttributes"] = seg_atrributes_list 
+    # Open file for writing
+    fileObject = open("./out/matter_seg/labels.txt", "w")
+    fileObject.write(itk_header)
+    for i, new_regions in enumerate(seg_map['Regions']):
+        
+        if new_regions['seg value'] == 0:
+            fileObject.write(txt.format(new_regions['seg value'], 0,0,0,0,0,0,new_regions['seg name']))
+        
+        else:
+            color=colors[i-1].split(',')
+            fileObject.write(txt.format(new_regions['seg value'], color[0],color[1],color[2].strip(),1,1,1,new_regions['seg name']))
+    fileObject.close()
 
-    json_object = json.dumps(data_dict, indent = 4)
-    with open(f"./out/anatomy_seg/labels.json", "w") as outfile:
-        outfile.write(json_object)
+    fileObject = open("./out/anatomy_seg/labels.txt", "w")
+    fileObject.write(itk_header)
+    for i, (key, value) in enumerate(seg_map['SYNTHSEG_MAP'].items()):
+        
+        if value == 0:
+            fileObject.write(txt.format(value, 0,0,0,0,0,0,key))
+
+        else:
+            color=colors[i-1].split(',')
+            fileObject.write(txt.format(value, color[0],color[1],color[2].strip(),1,1,1,key))
+    fileObject.close()
+
 
 def anatomy_seg(inp_file_path:str, op_file_path:str, mapping_path:str):
     try:
