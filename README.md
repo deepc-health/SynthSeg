@@ -1,7 +1,7 @@
 # Anatomy Based GM, WM and CSF Segmentation
 
 In this repository, we repurpose the SynthSeg based model to 
-do Gray Matter, White Matter and Cerebro Spinal Fluid segmentation for MRI of the brain. 
+do Gray Matter(GM), White Matter(WM) and Cerebro-Spinal Fluid(CSF) segmentation for MRI of the brain. 
 Using medical information we assign each of the anatomical region from the synthseg into one 
 of the categories. This process is also configurable. The method is dockerised in to allow 
 for plug and play approach. 
@@ -10,16 +10,29 @@ for plug and play approach.
 
 ### Easily segment your data with one command
 
-Once all the docker and its dependancies are installed, you can simply test brain matter segmentation on your own data with:
+Once all the docker and its dependencies are installed, you can simply test brain matter segmentation on your own data with:
 
 **Run with GPUs:**
+
+default:
 ```
-docker run --gpus all -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py <optional_flags>
+docker run --gpus all --user "$(id -u):$(id -g)" -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg
+```
+ with additional flags:
+```
+docker run --gpus all --user "$(id -u):$(id -g)" -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py <optional_flags>
 ```
 **Run without GPUs:**
+
+default:
 ```
-docker run -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py --cpu <optional_flags>
+docker run --user "$(id -u):$(id -g)" -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg
 ```
+ with additional flags:
+```
+docker run --user "$(id -u):$(id -g)" -v <inpdir>:/synthseg/inp -v <outdir>:/synthseg/out aparida12/brainseg python -u run_seg.py <optional_flags>
+```
+
 where:
 - `<inpdir>` is the directory with all nifti files(extn .nii.gz or .nii) that need to be segmented.
 - `<outdir>` is the directory where all outputs are stored(`<inpdir>` should not be `<outdir>`). 
@@ -30,23 +43,20 @@ Additional optional flags are also available:
 - `--threads`: to indicate the number of cores to be used if running on a CPU (example: `--threads 3` to run on 3 cores).
 This value defaults to 1, but we recommend increasing it for faster analysis.
 - `--crop`: to crop the input images to a given shape before segmentation. The given size must be divisible by 32.
-Images are cropped around their centre, and their segmentations are given at the original size). It can be given as a 
+Images are cropped around their center, and their segmentations are given at the original size). It can be given as a 
 single (i.e., `--crop 160` to run on 160<sup>3</sup> patches), or several integers (i.e, `--crop 160 128 192` to crop to
 different sizes in each direction, ordered in RAS coordinates). This value defaults to 192, but it can be decreased
 for faster analysis or to fit in your GPU.
 
 
-**IMPORTANT:** Unlike the original synthseg, we resample the synthseg output to its original voxel dimension. So both the anatomy maps and the region maps 
-are overlayable on the original input MRI.
-
-The complete list of segmented structures is available in [labels table.txt](data/labels%20table.txt) along with their
-corresponding values.
+**IMPORTANT:**, Unlike the original synthseg, we resample the synthseg output to its original voxel dimension. So both the anatomy maps and the region maps 
+are overlay able on the original input MRI.
 
 ----------------
 
 ### Input Folder Structure
 
-The `seg_config.yaml` is optional inside the `inpdir`. It is only required when the user wants to change the classification of the default anatomy into different regions than in the default `seg_config.yaml`
+The `seg_config.yaml` is optional inside the `<inpdir>`. It is only required when the user wants to change the classification of the default anatomy into different regions than in the default `seg_config.yaml`
 ```
 │
 └───<inpdir>
@@ -56,15 +66,14 @@ The `seg_config.yaml` is optional inside the `inpdir`. It is only required when 
 │   │.  seg_config.yaml
 
 ```
-
 ----------------
 ### Output Folder Structure
 After processing is over the `<outdir>` has folders - `anatomy_seg` and `matter_seg`.
 
 where:
-- `anatomy_seg` is the directory where the files with the different brain structures are segmented separately(the resampled to orignal size output of the SynthSeg algorithm)
-- `matter_seg` is the directory where the files where the anatomies are aggregated into different regions like GM, WM, CSF and others as specified by the `seg_config.yaml`
-- `labels.json` is a json file which has the mapping between pixel values of the nifti file and the corresponding name of the structure or region.
+- `anatomy_seg` is the directory where the files with the different brain structures are segmented separately(the resampled to original size output of the SynthSeg algorithm)
+- `matter_seg` is the directory where the files where the anatomies are aggregated into different regions like GM, WM, CSF, and others as specified by the `seg_config.yaml`
+- `labels.txt` is a TXT file that has the mapping between pixel values of the nifti file with the corresponding name of the structure or region and some suggested color scheme that can be used by ITKSnap in the segmentation mode.
 
 ```
 │
@@ -73,19 +82,19 @@ where:
 │   │   │   │seg_file011.nii.gz
 │   │   │   │seg_file012.nii.gz
 │   │   │   │seg_file012.nii.gz
-│   │   │   │.  labels.json
+│   │   │   │.  labels.txt
 │   │
 │   │─── matter_seg
 │   │   │   │seg_file011.nii.gz
 │   │   │   │seg_file012.nii.gz
 │   │   │   │seg_file012.nii.gz
-│   │   │   │.  labels.json
+│   │   │   │.  labels.txt
 
 ```
 ----------------
 ### User Specified `seg_config.yaml`
 
-Download the template `seg_config.yaml` from [here](https://raw.githubusercontent.com/a-parida12/SynthSeg/master/data/seg_config.yaml)(You can right click save-as `seg_config.yaml`). Modify the various regions by following the steps mentioned in the yaml file. Do not forget to put the modified file inside the `<inpdir>` along with the other Nifti Files.
+Download the template `seg_config.yaml` from [here](https://raw.githubusercontent.com/a-parida12/SynthSeg/master/data/seg_config.yaml)(You can right-click save-as `seg_config.yaml`). Modify the various regions by following the steps mentioned in the YAML file. Do not forget to put the modified file inside the `<inpdir>` along with the other Nifti Files.
 
 
 --------------------------------

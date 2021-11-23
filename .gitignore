@@ -16,7 +16,9 @@ SynthSeg/check_*
 SynthSeg/training_*
 SynthSeg/predict_*
 ./synthseg/*
-./inp/*
-./out/*
+*/inp/*
+*/out/*
 
-**.nii.gz
+**.nii*
+**.mat
+**.dcm
