@@ -23,7 +23,6 @@ jobs:
           IMAGE_NAME: aparida/brainseg
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          TAG_NAME: $(cat ./docker-tag.txt)
           BUILDX: "true"
       - name: Build & Push to Docker Latest
         uses: opspresso/action-docker@master
