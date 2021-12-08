@@ -23,7 +23,7 @@ jobs:
           IMAGE_NAME: aparida/brainseg
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          BUILDX: "true"
+          BUILDX: "false"
       - name: Build & Push to Docker Latest
         uses: opspresso/action-docker@master
         with:
@@ -33,4 +33,4 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           TAG_NAME: "latest"
-          BUILDX: "true"
+          BUILDX: "false"
