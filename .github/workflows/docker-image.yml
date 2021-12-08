@@ -20,7 +20,7 @@ jobs:
         with:
           args: --docker
         env:
-          IMAGE_NAME: aparida/brainseg
+          IMAGE_NAME: aparida12/brainseg
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           BUILDX: "false"
