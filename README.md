@@ -6,6 +6,10 @@ Using medical information we assign each of the anatomical region from the synth
 of the categories. This process is also configurable. The method is dockerised in to allow 
 for plug and play approach. 
 
+
+<img width="671" alt="Sample Segmentation Result" src="https://user-images.githubusercontent.com/23334003/153214599-cc600e9e-5f0f-476f-83a9-5f61ef657662.png">
+
+
 ----------------
 
 ### Easily segment your data with one command
