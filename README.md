@@ -169,3 +169,11 @@ CVPR 2018
 [2] *[Unsupervised Data Imputation via Variational Inference of Deep Subspaces](https://arxiv.org/abs/1903.03503)* \
 Adrian V. Dalca, John Guttag, Mert R. Sabuncu \
 Arxiv preprint 2019
+
+----------------
+###  External Links
+ - [Original Code Repo](https://github.com/BBillot/SynthSeg)
+ - [Docker Code Repo](https://github.com/deepc-health/SynthSeg)
+ - [Docker Container Repo](https://hub.docker.com/r/aparida12/brainseg)
+--------------------------------
+--------------------------------
