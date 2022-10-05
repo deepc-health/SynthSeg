@@ -1,6 +1,6 @@
 # Anatomy Based GM, WM and CSF Segmentation
 
-In this repository, we repurpose the SynthSeg based model to 
+In this repository we repurpose the SynthSeg based model to 
 do Gray Matter(GM), White Matter(WM) and Cerebro-Spinal Fluid(CSF) segmentation for MRI of the brain. 
 Using medical information we assign each of the anatomical region from the synthseg into one 
 of the categories. This process is also configurable. The method is dockerised in to allow 
